@@ -1,5 +1,4 @@
 // bot-video.js
-require('dotenv').config();
 const { Telegraf } = require('telegraf');
 const { getVideoUrl } = require('./scraperService');
 const mongoose = require('mongoose');

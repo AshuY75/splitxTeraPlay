@@ -1,4 +1,6 @@
-require('dotenv').config();
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+}
 // 1️⃣ Ensure critical environment variables exist
 if (!process.env.BOT_TOKEN) {
     throw new Error("❌ CRITICAL ERROR: BOT_TOKEN is missing!");

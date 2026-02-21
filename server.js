@@ -1,6 +1,5 @@
 const express = require('express');
 const { getVideoUrl } = require('./scraperService');
-require('dotenv').config(); // Load environment variables
 const axios = require('axios');
 const path = require('path');
 const helmet = require('helmet');
