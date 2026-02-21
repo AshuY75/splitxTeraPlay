@@ -11,20 +11,13 @@ const crypto = require('crypto');
 const MONGODB_URI = process.env.MONGODB_URI;
 mongoose.connect(MONGODB_URI).then(() => console.log('🤖 Bot DB Connected.'));
 
-const videoSchema = new mongoose.Schema({
-    originalUrl: { type: String, required: true, unique: true },
-    streamUrl: { type: String, required: true },
-    title: { type: String, default: 'xTeraPlay Video' },
-    views: { type: Number, default: 0 },
-    thumbnail: { type: String, default: null },
-    createdAt: { type: Date, default: Date.now, expires: 3600 }
-});
-const Video = mongoose.model('Video', videoSchema);
+const Video = require('./models/Video');
 
 // Configuration
-const BOT_TOKEN = '8553702014:AAFcFUvF_H24dG9FauEHhR0qu_DIz1nf8kc';
-const WEBAPP_BASE_URL = process.env.WEBAPP_BASE_URL; // e.g., https://xxxx.ngrok-free.app
+const BOT_TOKEN = process.env.BOT_TOKEN;
+const WEBAPP_BASE_URL = process.env.WEBAPP_BASE_URL;
 const bot = new Telegraf(BOT_TOKEN);
+if (!BOT_TOKEN) throw new Error("BOT_TOKEN is missing!");
 
 // Health Check
 async function verifyWebApp() {
@@ -50,7 +43,7 @@ bot.on('text', async (ctx) => {
 
     const isServerUp = await verifyWebApp();
     if (!isServerUp) {
-        return ctx.reply('⚠️ **Server temporarily unavailable.**\nPlease ensure ngrok is running and WEBAPP_BASE_URL is updated.');
+        return ctx.reply('⚠️ **Server temporarily unavailable.**\nPlease try again in a few moments.');
     }
 
     const processingMsg = await ctx.reply('⏳ **Analyzing & Securing Video...**', { parse_mode: 'Markdown' });
@@ -98,13 +91,10 @@ bot.on('text', async (ctx) => {
 
 // 3️⃣ 7️⃣ 8️⃣ Startup Verification & Instructions
 bot.launch().then(() => {
-    console.log('\n--- xTeraPlay Bot Initialized ---');
-    console.log(`Active WebApp Domain: ${WEBAPP_BASE_URL}`);
-    console.log(`Set BotFather domain to: ${WEBAPP_BASE_URL.replace("https://", "")}`);
-    console.log('\n⚠️ WARNING: Free ngrok domain changes every restart.');
-    console.log('Update WEBAPP_BASE_URL and BotFather after each restart.');
-    console.log('--------------------------------\n');
+    console.log(`🤖 xTeraPlay Bot Online: ${WEBAPP_BASE_URL}`);
 });
+
+module.exports = { bot };
 
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));

@@ -18,7 +18,11 @@ async function initCluster() {
             maxConcurrency: 5, // Optimized for 2GB+ RAM
             puppeteerOptions: {
                 headless: true,
-                args: ['--no-sandbox', '--disable-setuid-sandbox']
+                args: [
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-dev-shm-usage'
+                ]
             },
             timeout: 120000,
             retryLimit: 1

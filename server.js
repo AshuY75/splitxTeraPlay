@@ -20,20 +20,13 @@ app.use(cors()); // Enable CORS for Telegram WebApp
 const MONGODB_URI = process.env.MONGODB_URI;
 
 mongoose.connect(MONGODB_URI)
-    .then(() => console.log('xTeraPlay DB Connected (Atlas)'))
-    .catch(err => console.error('Database connection failed.')); // Sanitized log
+    .then(() => console.log('✅ xTeraPlay DB Connected (Atlas)'))
+    .catch(err => {
+        console.error('❌ Database connection failed.');
+        process.exit(1);
+    });
 
-// Production-Grade Cyclic Video Model (1-Hour Cycle)
-const videoSchema = new mongoose.Schema({
-    originalUrl: { type: String, required: true, unique: true },
-    streamUrl: { type: String, required: true }, // 3️⃣ Zero Truncation Key
-    title: { type: String, default: 'xTeraPlay Video' },
-    views: { type: Number, default: 0 },
-    thumbnail: { type: String, default: null },
-    createdAt: { type: Date, default: Date.now, expires: 3600 } // 4️⃣ Auto-delete after 1 hour (TTL)
-}, { timestamps: false });
-
-const Video = mongoose.model('Video', videoSchema);
+const Video = require('./models/Video');
 
 // Security: Rate Limiting
 const limiter = rateLimit({
@@ -64,15 +57,8 @@ app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.ht
 app.use('/api/', limiter);
 
 // 1️⃣ Fix 404 DEPLOYMENT_NOT_FOUND (Explicit Routing)
-app.get('/health', (req, res) => res.status(200).send("OK")); // 5️⃣ Debug Route
+app.get('/health', (req, res) => res.status(200).send("OK")); // Railway Health Check
 app.get('/player', (req, res) => res.sendFile(path.join(__dirname, 'public', 'player.html')));
-
-/**
- * Production Deployment Recommendation:
- * - Deploy to a VPS (e.g., DigitalOcean, Hetzner) or Render.
- * - Use a static domain (e.g., xteraplay.com).
- * - Remove ngrok dependency for production stability.
- */
 
 // Fallback for other HTML routes (About, Contact, etc.)
 app.get('/:page', (req, res, next) => {
@@ -258,4 +244,8 @@ app.use((req, res) => {
     res.status(404).send("Route Not Found");
 });
 
-app.listen(PORT, () => console.log('xTeraPlay Production Server Online.'));
+const server = app.listen(PORT, () => {
+    console.log(`🚀 xTeraPlay Server Online on port ${PORT}`);
+});
+
+module.exports = { server };
