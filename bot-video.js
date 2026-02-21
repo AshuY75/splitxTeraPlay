@@ -22,9 +22,12 @@ if (!BOT_TOKEN) throw new Error("BOT_TOKEN is missing!");
 // Health Check
 async function verifyWebApp() {
     try {
-        const res = await fetch(`${WEBAPP_BASE_URL}/health`);
+        const healthUrl = `${WEBAPP_BASE_URL}/health`;
+        const res = await fetch(healthUrl);
+        if (!res.ok) console.error(`⚠️ Health check failed for ${healthUrl} with status ${res.status}`);
         return res.ok;
     } catch (e) {
+        console.error(`⚠️ Health check error for ${WEBAPP_BASE_URL}:`, e.message);
         return false;
     }
 }
