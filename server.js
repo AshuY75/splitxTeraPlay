@@ -85,7 +85,6 @@ app.post('/api/extract', async (req, res) => {
         if (video) {
             console.log("Fetched URL Length:", video.streamUrl.length);
             // Refresh TTL and update views
-            video.views += 1;
             video.createdAt = new Date(); // Refresh TTL
             await video.save();
             return res.json({ success: true, streamUrl: video.streamUrl, title: video.title });

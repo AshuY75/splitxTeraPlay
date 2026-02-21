@@ -59,19 +59,10 @@ bot.on('text', async (ctx) => {
         const data = await getVideoUrl(text);
         if (!data || !data.videoUrl) throw new Error('Extraction failed');
 
-        // 1. Persist to MongoDB for Community Grid
-        const video = await Video.findOneAndUpdate(
-            { originalUrl: text },
-            {
-                streamUrl: data.videoUrl,
-                title: data.title,
-                $inc: { views: 1 },
-                createdAt: new Date()
-            },
-            { upsert: true, new: true } // Return the updated document
-        );
+        // 1. [DEPRECATED BY USER] Persist to MongoDB for Community Grid
+        // We no longer store bot requests to keep DB clean/private as per request.
 
-        // 2. Step 8: Save to Shared SQLite Cache for Session Stability
+        // 2. Save to Shared SQLite Cache for Session Stability (Required for Player)
         const sessionId = crypto.randomBytes(5).toString('hex'); // Short persistent ID
         cache.set(sessionId, data.videoUrl);
 

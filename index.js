@@ -1,18 +1,20 @@
-if (process.env.NODE_ENV !== 'production') {
+const fs = require('fs');
+const path = require('path');
+
+// 1️⃣ Environment Loading (Robust for Local & Cloud)
+const envPath = path.join(__dirname, '.env');
+if (fs.existsSync(envPath)) {
     require('dotenv').config();
 }
-// 1️⃣ Ensure critical environment variables exist
-if (!process.env.BOT_TOKEN) {
-    throw new Error("❌ CRITICAL ERROR: BOT_TOKEN is missing!");
-}
 
-if (!process.env.MONGODB_URI) {
-    throw new Error("❌ CRITICAL ERROR: MONGODB_URI is missing!");
-}
+// 2️⃣ Strict Validation before loading any logic
+const BOT_TOKEN = process.env.BOT_TOKEN;
+const MONGODB_URI = process.env.MONGODB_URI;
+const WEBAPP_BASE_URL = process.env.WEBAPP_BASE_URL;
 
-if (!process.env.WEBAPP_BASE_URL) {
-    throw new Error("❌ CRITICAL ERROR: WEBAPP_BASE_URL is missing!");
-}
+if (!BOT_TOKEN) throw new Error("❌ CRITICAL ERROR: BOT_TOKEN is missing!");
+if (!MONGODB_URI) throw new Error("❌ CRITICAL ERROR: MONGODB_URI is missing!");
+if (!WEBAPP_BASE_URL) throw new Error("❌ CRITICAL ERROR: WEBAPP_BASE_URL is missing!");
 
 const { server } = require('./server');
 const { bot } = require('./bot-video');
