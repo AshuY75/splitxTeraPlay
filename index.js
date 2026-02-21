@@ -1,26 +1,26 @@
-// index.js - xTeraPlay Railway Entry Point
 require('dotenv').config();
-const { server } = require('./server');
-const { bot } = require('./bot-video');
-
 // 1️⃣ Ensure critical environment variables exist
 if (!process.env.BOT_TOKEN) {
-    console.error("❌ CRITICAL ERROR: BOT_TOKEN is missing!");
-    process.exit(1);
+    throw new Error("❌ CRITICAL ERROR: BOT_TOKEN is missing!");
 }
 
 if (!process.env.MONGODB_URI) {
-    console.error("❌ CRITICAL ERROR: MONGODB_URI is missing!");
-    process.exit(1);
+    throw new Error("❌ CRITICAL ERROR: MONGODB_URI is missing!");
 }
 
 if (!process.env.WEBAPP_BASE_URL) {
-    console.warn("⚠️ WARNING: WEBAPP_BASE_URL is missing. Telegram buttons may not work correctly.");
+    throw new Error("❌ CRITICAL ERROR: WEBAPP_BASE_URL is missing!");
 }
 
-console.log("🚀 Starting xTeraPlay Unified Service...");
-console.log("Active WebApp Domain:", process.env.WEBAPP_BASE_URL || "Not Set");
+const { server } = require('./server');
+const { bot } = require('./bot-video');
 
-// The server and bot are initialized via their respective requires
-// server.js starts the app.listen()
-// bot-video.js starts the bot.launch()
+console.log("-----------------------------------------");
+console.log("💎 xTeraPlay PRODUCTION AUDIT SYSTEM");
+console.log("-----------------------------------------");
+console.log("NODE_ENV          :", process.env.NODE_ENV || "development");
+console.log("WebApp Domain     :", process.env.WEBAPP_BASE_URL);
+console.log("Port              :", process.env.PORT || 3000);
+console.log("MongoDB Status    : Initializing...");
+console.log("Telegram Bot      : Initializing...");
+console.log("-----------------------------------------");

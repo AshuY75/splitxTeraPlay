@@ -21,6 +21,11 @@ if (!BOT_TOKEN) throw new Error("BOT_TOKEN is missing!");
 
 // Health Check
 async function verifyWebApp() {
+    // In development mode, we bypass health check to allow local testing without tunnels
+    if (process.env.NODE_ENV !== 'production') {
+        return true;
+    }
+
     try {
         const healthUrl = `${WEBAPP_BASE_URL}/health`;
         const res = await fetch(healthUrl);
@@ -92,9 +97,9 @@ bot.on('text', async (ctx) => {
     }
 });
 
-// 3️⃣ 7️⃣ 8️⃣ Startup Verification & Instructions
+// Startup Notification
 bot.launch().then(() => {
-    console.log(`🤖 xTeraPlay Bot Online: ${WEBAPP_BASE_URL}`);
+    console.log(`🤖 xTeraPlay Bot Online Status: OK`);
 });
 
 module.exports = { bot };
